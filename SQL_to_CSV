@@ -1,0 +1,15 @@
+import pypyodbc 
+import pandas.io.sql as pdsql
+
+cnxn = pypyodbc.connect("Driver={SQL Server Native Client 11.0};"
+                        "Server=servername;"
+                        "Database=dbname;"
+                        "Trusted_Connection=yes;")
+
+cursor = cnxn.cursor()
+
+dat = pdsql.read_sql_query('SELECT * FROM tablename',cnxn)
+
+Outdir = "filepath\filename"
+
+dat.to_csv(path_or_buf=Outdir,sep=',',na_rep='NULL',)

@@ -1,0 +1,16 @@
+import pypyodbc 
+import pandas.io.sql as pdsql
+
+cnxn = pypyodbc.connect("Driver={SQL Server Native Client 11.0};"
+                        "Server=servername;"
+                        "Database=dbname;"
+                        "Trusted_Connection=yes;")
+
+cursor = cnxn.cursor()
+cursor.execute('SELECT * FROM tablename')
+
+for row in cursor:
+    print('row = %r' % (row,))
+    
+dat = pdsql.read_sql_query('SELECT * FROM tablename',cnxn)
+df1 = pdsql.DataFrame(data=dat)

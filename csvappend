@@ -1,0 +1,47 @@
+import os
+import pandas as pd
+
+root = os.getcwd()
+roottxt = root + "/log.txt"
+rootdat = root + r"\data"
+rootout = root + r"/result.csv"
+
+a = open(roottxt, "w")
+a.write('FileName,MTime,ATime,Path,FN\n')
+for path, subdirs, files in os.walk(rootdat):
+   for filename in files:
+     f = os.path.join(path, filename)
+     i = os.path.join(path)
+     j = os.path.join(filename)
+     try:
+        g = os.path.getmtime(f)
+        h = os.path.getatime(f)
+     except Exception:
+        pass 
+     a.write(str(f) 
+             + ',' + str(g) 
+             + ',' + str(h) 
+             + ',' + str(i)
+             + ',' + str(j)
+             + '\n') 
+a.close()
+
+res = []
+for root, dirs, files in os.walk(rootdat, topdown=True):
+    if len(files) > 0:
+        res.extend(list(zip([root]*len(files), files)))
+
+df = pd.DataFrame(res, columns=['Path', 'File_Name'])#.set_index('Path')
+
+df['FP'] = df['Path'] + '/' + df['File_Name']
+
+df = df.iloc[0:]
+FP = df['FP'].tolist()
+
+df_result = pd.DataFrame()
+for i in FP:
+    df_result = pd.concat([pd.read_csv(f, header=0).assign(filename=f) for f in FP]
+                   ,ignore_index=True)
+
+
+df_result.to_csv(rootout, sep=',',quoting=1)
